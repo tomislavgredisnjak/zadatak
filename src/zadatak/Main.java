@@ -50,9 +50,19 @@ public class Main {
 		
 	}
 	
+	//ovdje isto dodati te tocke
 	private static void flipWordOrder(String text) {
 		String sentences[] = text.split("[?.!]+\s");
-
+		for(String sentence : sentences) {
+			String words[] = sentence.split("\s");
+			for(int i = words.length - 1; i != -1; i--) {
+				if (i == words.length - 1) {
+					System.out.print(words[i].substring(0, 1).toUpperCase() + words[i].substring(1) + " ");
+				} else {
+					System.out.print(words[i].toLowerCase() + " ");
+				}
+			}
+		}
 		
 	}
 	
