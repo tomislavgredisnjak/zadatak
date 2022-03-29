@@ -1,11 +1,13 @@
 package zadatak;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class Main {
+	  private static final DecimalFormat df = new DecimalFormat("0");
 
 	public static void main(String[] args) {
 		String text = new String("Sed ut perspiciatis unde omnis iste natus error sit voluptatem "
@@ -46,8 +48,22 @@ public class Main {
 		}
 	}
 	
+	//ovdje isto treba dodati dijakriticke znakove
 	private static void flipLetterOrder(String text) {
-		
+		String sentences[] = text.split("[?.!]+\s");
+		for(String sentence : sentences) {
+			String words[] = sentence.split("[ ,.?!]+");
+			for(int j = 0; j < words.length; j++) {
+				for (int i = words[j].length() - 1; i != -1; i--) {
+					if(j == 0 && i == words[j].length() - 1) {
+						//System.out.print(words[j].toUpperCase().charAt(i));
+					} else {
+						//System.out.print(words[j].toLowerCase().charAt(i));
+					}	
+				}
+				//System.out.print(" ");
+			}
+		}
 	}
 	
 	//ovdje isto dodati te tocke
@@ -57,9 +73,9 @@ public class Main {
 			String words[] = sentence.split("\s");
 			for(int i = words.length - 1; i != -1; i--) {
 				if (i == words.length - 1) {
-					System.out.print(words[i].substring(0, 1).toUpperCase() + words[i].substring(1) + " ");
+					//System.out.print(words[i].substring(0, 1).toUpperCase() + words[i].substring(1) + " ");
 				} else {
-					System.out.print(words[i].toLowerCase() + " ");
+					//System.out.print(words[i].toLowerCase() + " ");
 				}
 			}
 		}
@@ -76,7 +92,60 @@ public class Main {
 	}
 	
 	private static void statistic(String text) {
+		String sentences[] = text.split("[?.!]+\s");
+		Integer vowelTotalCount = 0;
+		Integer consonantsTotalCount = 0;
+		List<Character> vowels = new ArrayList<>() {
+			{
+				add('a');
+				add('e');
+				add('i');
+				add('o');
+				add('u');
+			}
+		};
 		
+		List<Character> signs = new ArrayList<>() {
+			{
+				add(' ');
+				add(',');
+				add('.');
+				add('?');
+				add('!');
+			}
+		};
+		
+		for(int j = 0; j < sentences.length; j++) {
+			Integer sentenceVowelCount = 0;
+			Integer sentenceConsonantsCount = 0;
+
+			for (int i = 0; i < sentences[j].length(); i++) {
+				if(vowels.contains(sentences[j].toLowerCase().charAt(i))){
+					vowelTotalCount++;
+					sentenceVowelCount++;
+		        } else if (!signs.contains(sentences[j].toLowerCase().charAt(i))) {
+		        	consonantsTotalCount++;
+		        	sentenceConsonantsCount++;
+		        }
+			}
+			
+			System.out.println(j+1 + ". sentence vowel count: " + sentenceVowelCount);
+			System.out.println(j+1 + ". sentence consonants count: " + sentenceConsonantsCount);
+			double percentage = 1;
+			if(sentenceVowelCount > sentenceConsonantsCount) {
+				percentage = (double)sentenceVowelCount/(double)sentenceConsonantsCount;
+				System.out.println(j+1 + ". sentence vowel count is " + df.format(percentage*100 - 100) + "% greater than consonant's");
+			} else {
+				percentage = (double)sentenceConsonantsCount/(double)sentenceVowelCount;
+				System.out.println(j+1 + ". sentence consonant count is " + df.format(percentage*100 - 100) + "% greater than vowel's");
+			}
+		}
+
+		System.out.println("Total vowel count: " + vowelTotalCount);
+		System.out.println("Total consonants count: " + consonantsTotalCount);
+		System.out.println(vowelTotalCount < consonantsTotalCount ? 
+			"Consonant count is " + df.format((double)consonantsTotalCount/(double)vowelTotalCount*100 - 100) + "% greater than vowel's" :
+			"Vowel count is " + df.format((double)vowelTotalCount/(double)consonantsTotalCount*100 - 100) + "% greater than consonant's");
 	}
 
 }
