@@ -1,14 +1,25 @@
 package zadatak;
 
+import java.text.BreakIterator;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class Main {
-	  private static final DecimalFormat df = new DecimalFormat("0");
+	private static final DecimalFormat df = new DecimalFormat("0");
+	private static List<Character> signs = new ArrayList<>() {
+	private static final long serialVersionUID = 1L;
 
+		{
+			add(' ');
+			add(',');
+			add('.');
+			add('?');
+			add('!');
+		}
+	};
 	public static void main(String[] args) {
 		String text = new String("Sed ut perspiciatis unde omnis iste natus error sit voluptatem "
 				+ "accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab "
@@ -30,72 +41,116 @@ public class Main {
 		statistic(text);
 	}
 
-	//ovaj random ne radi bas i treba dodati dijakriticke znakove
 	private static void changeLetterOrder(String text) {
-		String words[] = text.split("[ ,.?!]+");
+		String words[] = text.split("\s");
 		for(String word : words) {
-			List<String> strList = new ArrayList<>(Arrays.asList(word.substring(1, word.length()-1).split("\s")));
-			//strList.forEach(str -> System.out.println(str));
-			Collections.shuffle(strList);
-			//strList.forEach(str -> System.out.println(str + "\n"));
-			String[] middleLettersArray = strList.toArray(new String[strList.size()]);
+			Character sign = null;
+			if(signs.contains(word.charAt(word.length()-1))) {
+				sign = word.charAt(word.length()-1);
+				word = word.substring(1, word.length() - 1);
+			}
+			List<Character> letterList = new ArrayList<>();
+			String middleLetterOrg = word.substring(1, word.length()-1);
+			for (int i = 0; i < middleLetterOrg.length(); i++) {
+				letterList.add((Character) middleLetterOrg.charAt(i));
+			}
+			Collections.shuffle(letterList);
 			String middleLetters = "";
-			for (String middleLetter : middleLettersArray) {
+			for (Character middleLetter : letterList) {
 				middleLetters += middleLetter;
 			}
-			word = String.valueOf(word.charAt(word.length()-1)) + middleLetters + String.valueOf(word.charAt(0));
-			//System.out.print(word + " ");
+			word = String.valueOf(word.charAt(word.length()-1)) + middleLetters + String.valueOf(word.charAt(0)) + (sign != null ? String.valueOf(sign) : "");
+			System.out.print(word + " ");
 		}
+		spacer();
 	}
 	
-	//ovdje isto treba dodati dijakriticke znakove
 	private static void flipLetterOrder(String text) {
-		String sentences[] = text.split("[?.!]+\s");
+		List<String> sentences = new ArrayList<>();
+		BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
+		iterator.setText(text);
+		int start = iterator.first();
+		for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
+			sentences.add(text.substring(start,end));
+		}
 		for(String sentence : sentences) {
-			String words[] = sentence.split("[ ,.?!]+");
-			for(int j = 0; j < words.length; j++) {
-				for (int i = words[j].length() - 1; i != -1; i--) {
-					if(j == 0 && i == words[j].length() - 1) {
-						//System.out.print(words[j].toUpperCase().charAt(i));
+			String words[] = sentence.split("\s");
+			for(int i = 0; i < words.length; i++) {
+				Character sign = null;
+				for (int j = words[i].length() - 1; j != -1; j--) {
+					if(i == 0 && j == words[i].length() - 1) {
+						System.out.print(words[i].toUpperCase().charAt(j));
 					} else {
-						//System.out.print(words[j].toLowerCase().charAt(i));
+						if(signs.contains(words[i].charAt(j))) {
+							sign = words[i].charAt(j);
+						} else {
+							System.out.print(words[i].toLowerCase().charAt(j));
+						}
 					}	
 				}
-				//System.out.print(" ");
+				if(sign != null) {
+					System.out.print(sign);
+				}
+				System.out.print(" ");
 			}
 		}
+		spacer();
 	}
 	
-	//ovdje isto dodati te tocke
 	private static void flipWordOrder(String text) {
-		String sentences[] = text.split("[?.!]+\s");
+		List<String> sentences = new ArrayList<>();
+		BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
+		iterator.setText(text);
+		int start = iterator.first();
+		for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
+			sentences.add(text.substring(start,end));
+		}
 		for(String sentence : sentences) {
+			String sign = null;
 			String words[] = sentence.split("\s");
 			for(int i = words.length - 1; i != -1; i--) {
 				if (i == words.length - 1) {
-					//System.out.print(words[i].substring(0, 1).toUpperCase() + words[i].substring(1) + " ");
+					System.out.print(words[i].substring(0, 1).toUpperCase() + words[i].substring(1, words[i].length() - 1) + " ");
+					sign = words[i].substring(words[i].length() - 1);
 				} else {
-					//System.out.print(words[i].toLowerCase() + " ");
+					System.out.print(i == 0 ? words[i].toLowerCase() + "" : words[i].toLowerCase() + " ");
 				}
 			}
+			System.out.print(sign + " ");
 		}
-		
+		spacer();
 	}
 	
 	private static void flipSentenceOrder(String text) {
-		//ovdje popraviti da uzima i tocke
-		String sentences[] = text.split("[?.!]+\s");
-
-		for(int i = sentences.length - 1; i != -1; i--) {
-			//System.out.println(sentences[i]);
+		List<String> sentences = new ArrayList<>();
+		BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
+		iterator.setText(text);
+		int start = iterator.first();
+		for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
+			sentences.add(text.substring(start,end));
 		}
+		for(int i = sentences.size() - 1; i != -1; i--) {
+			System.out.print(sentences.get(i));
+			if(sentences.get(i).charAt(sentences.get(i).length()-1) != ' ') {
+				System.out.print(" ");
+			}
+		}
+		spacer();
 	}
 	
 	private static void statistic(String text) {
-		String sentences[] = text.split("[?.!]+\s");
+		List<String> sentences = new ArrayList<>();
+		BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
+		iterator.setText(text);
+		int start = iterator.first();
+		for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
+			sentences.add(text.substring(start,end));
+		}
 		Integer vowelTotalCount = 0;
 		Integer consonantsTotalCount = 0;
 		List<Character> vowels = new ArrayList<>() {
+		private static final long serialVersionUID = 1L;
+
 			{
 				add('a');
 				add('e');
@@ -105,39 +160,29 @@ public class Main {
 			}
 		};
 		
-		List<Character> signs = new ArrayList<>() {
-			{
-				add(' ');
-				add(',');
-				add('.');
-				add('?');
-				add('!');
-			}
-		};
-		
-		for(int j = 0; j < sentences.length; j++) {
+		for(int i = 0; i < sentences.size(); i++) {
 			Integer sentenceVowelCount = 0;
 			Integer sentenceConsonantsCount = 0;
 
-			for (int i = 0; i < sentences[j].length(); i++) {
-				if(vowels.contains(sentences[j].toLowerCase().charAt(i))){
+			for (int j = 0; j < sentences.get(i).length(); j++) {
+				if(vowels.contains(sentences.get(i).toLowerCase().charAt(j))){
 					vowelTotalCount++;
 					sentenceVowelCount++;
-		        } else if (!signs.contains(sentences[j].toLowerCase().charAt(i))) {
+		        } else if (!signs.contains(sentences.get(i).toLowerCase().charAt(j))) {
 		        	consonantsTotalCount++;
 		        	sentenceConsonantsCount++;
 		        }
 			}
 			
-			System.out.println(j+1 + ". sentence vowel count: " + sentenceVowelCount);
-			System.out.println(j+1 + ". sentence consonants count: " + sentenceConsonantsCount);
+			System.out.println(i+1 + ". sentence vowel count: " + sentenceVowelCount);
+			System.out.println(i+1 + ". sentence consonants count: " + sentenceConsonantsCount);
 			double percentage = 1;
 			if(sentenceVowelCount > sentenceConsonantsCount) {
 				percentage = (double)sentenceVowelCount/(double)sentenceConsonantsCount;
-				System.out.println(j+1 + ". sentence vowel count is " + df.format(percentage*100 - 100) + "% greater than consonant's");
+				System.out.println(i+1 + ". sentence vowel count is " + df.format(percentage*100 - 100) + "% greater than consonant's");
 			} else {
 				percentage = (double)sentenceConsonantsCount/(double)sentenceVowelCount;
-				System.out.println(j+1 + ". sentence consonant count is " + df.format(percentage*100 - 100) + "% greater than vowel's");
+				System.out.println(i+1 + ". sentence consonant count is " + df.format(percentage*100 - 100) + "% greater than vowel's");
 			}
 		}
 
@@ -146,6 +191,11 @@ public class Main {
 		System.out.println(vowelTotalCount < consonantsTotalCount ? 
 			"Consonant count is " + df.format((double)consonantsTotalCount/(double)vowelTotalCount*100 - 100) + "% greater than vowel's" :
 			"Vowel count is " + df.format((double)vowelTotalCount/(double)consonantsTotalCount*100 - 100) + "% greater than consonant's");
+		spacer();
 	}
 
+	private static void spacer() {
+		System.out.println();
+		System.out.println();
+	}
 }
