@@ -11,7 +11,6 @@ public class Main {
 	private static final DecimalFormat df = new DecimalFormat("0");
 	private static List<Character> signs = new ArrayList<>() {
 	private static final long serialVersionUID = 1L;
-
 		{
 			add(' ');
 			add(',');
@@ -45,6 +44,7 @@ public class Main {
 	private static void changeLetterOrder(String text) {
 		String result = "";
 		String words[] = text.split("\s");
+
 		for(String word : words) {
 			Character sign = null;
 			if(signs.contains(word.charAt(word.length()-1))) {
@@ -61,10 +61,10 @@ public class Main {
 			for (Character middleLetter : middleLettersList) {
 				middleLettersShuffled += middleLetter;
 			}
-
 			word = String.valueOf(word.charAt(0)) + middleLettersShuffled + String.valueOf(word.charAt(word.length()-1)) + (sign != null ? String.valueOf(sign) : "");
 			result += word + " ";
 		}
+
 		System.out.println(result);
 		spacer();
 	}
@@ -72,20 +72,21 @@ public class Main {
 	private static void flipLetterOrder(String text) {
 		String result = "";
 		List<String> sentences = getSentences(text);
+
 		for(String sentence : sentences) {
 			String words[] = sentence.split("\s");
 			for(int i = 0; i < words.length; i++) {
 				Character sign = null;
 				for (int j = words[i].length() - 1; j != -1; j--) {
-					if(i == 0 && j == words[i].length() - 1) {
+					if (i == 0 && j == words[i].length() - 1) {
 						result += words[i].toUpperCase().charAt(j);
 					} else {
-						if(signs.contains(words[i].charAt(j))) {
+						if (signs.contains(words[i].charAt(j))) {
 							sign = words[i].charAt(j);
 						} else {
 							result += words[i].toLowerCase().charAt(j);
 						}
-					}	
+					}
 				}
 				if(sign != null) {
 					result += sign;
@@ -101,6 +102,7 @@ public class Main {
 	private static void flipWordOrder(String text) {
 		String result = "";
 		List<String> sentences = getSentences(text);
+
 		for(String sentence : sentences) {
 			String sign = null;
 			String words[] = sentence.split("\s");
@@ -114,6 +116,7 @@ public class Main {
 			}
 			result += (sign + " ");
 		}
+
 		System.out.println(result);
 		spacer();
 	}
@@ -121,12 +124,14 @@ public class Main {
 	private static void flipSentenceOrder(String text) {
 		String result = "";
 		List<String> sentences = getSentences(text);
+
 		for(int i = sentences.size() - 1; i != -1; i--) {
 			result += sentences.get(i);
 			if(sentences.get(i).charAt(sentences.get(i).length()-1) != ' ') {
 				result += " ";
 			}
 		}
+
 		System.out.println(result);
 		spacer();
 	}
@@ -150,7 +155,6 @@ public class Main {
 		for(int i = 0; i < sentences.size(); i++) {
 			Integer sentenceVowelCount = 0;
 			Integer sentenceConsonantsCount = 0;
-
 			for (int j = 0; j < sentences.get(i).length(); j++) {
 				if(vowels.contains(sentences.get(i).toLowerCase().charAt(j))){
 					vowelTotalCount++;
@@ -160,7 +164,6 @@ public class Main {
 		        	sentenceConsonantsCount++;
 		        }
 			}
-			
 			result += (i+1 + ". sentence vowel count: " + sentenceVowelCount + "\n");
 			result += (i+1 + ". sentence consonants count: " + sentenceConsonantsCount + "\n");
 			double percentage = 1;
@@ -187,9 +190,11 @@ public class Main {
 		BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
 		iterator.setText(text);
 		int start = iterator.first();
+
 		for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
 			sentences.add(text.substring(start,end));
 		}
+
 		return sentences;
 	}
 	
