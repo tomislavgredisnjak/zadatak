@@ -163,19 +163,19 @@ public class Main {
 		        }
 			}
 			result += (i+1 + ". rečenica:\n");
-			int count = 0;
+			int position = 0;
 			for (Map.Entry<Character, Integer> vowel : sentenceVowels.entrySet()) {
-			    count++;
-			    result += (vowel.getKey() + ": " + vowel.getValue() + (count == sentenceVowels.size() ? "\n" : ", ")); 
+			    position++;
+			    result += (vowel.getKey() + ": " + vowel.getValue() + (position == sentenceVowels.size() ? "\n" : ", ")); 
 			}
 		}
 
-		int count = 0;
+		int position = 0;
 		result += "Sveukuno:\n";
 
 		for (Map.Entry<Character, Integer> vowel : totalVowels.entrySet()) {
-		    count++;
-		    result += (vowel.getKey() + ": " + vowel.getValue() + (count == totalVowels.size() ? "\n" : ", ")); 
+		    position++;
+		    result += (vowel.getKey() + ": " + vowel.getValue() + (position == totalVowels.size() ? "\n" : ", "));
 		}
 
 		System.out.println(result);
