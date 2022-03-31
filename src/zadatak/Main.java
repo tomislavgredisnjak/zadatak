@@ -1,14 +1,14 @@
 package zadatak;
 
 import java.text.BreakIterator;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class Main {
-	private static final DecimalFormat df = new DecimalFormat("0");
 	private static List<Character> signs = new ArrayList<>() {
 	private static final long serialVersionUID = 1L;
 		{
@@ -38,12 +38,12 @@ public class Main {
 		new Thread(() -> flipLetterOrder(text)).start();
 		new Thread(() -> flipWordOrder(text)).start();
 		new Thread(() -> flipSentenceOrder(text)).start();
-		new Thread(() -> statistic(text)).start();
+		new Thread(() -> statisticVowels(text)).start();
 	}
 
 	private static void changeLetterOrder(String text) {
 		String result = "";
-		String words[] = text.split("\s");
+		String words[] = text.split("\\s+");
 
 		for(String word : words) {
 			Character sign = null;
@@ -74,7 +74,7 @@ public class Main {
 		List<String> sentences = getSentences(text);
 
 		for(String sentence : sentences) {
-			String words[] = sentence.split("\s");
+			String words[] = sentence.split("\\s+");
 			for(int i = 0; i < words.length; i++) {
 				Character sign = null;
 				for (int j = words[i].length() - 1; j != -1; j--) {
@@ -105,7 +105,7 @@ public class Main {
 
 		for(String sentence : sentences) {
 			String sign = null;
-			String words[] = sentence.split("\s");
+			String words[] = sentence.split("\\s+");
 			for(int i = words.length - 1; i != -1; i--) {
 				if (i == words.length - 1) {
 					result += (words[i].substring(0, 1).toUpperCase() + words[i].substring(1, words[i].length() - 1) + " ");
@@ -136,53 +136,49 @@ public class Main {
 		spacer();
 	}
 	
-	private static void statistic(String text) {
+	private static void statisticVowels(String text) {
 		String result = "";
 		List<String> sentences = getSentences(text);
-		Integer vowelTotalCount = 0;
-		Integer consonantsTotalCount = 0;
-		List<Character> vowels = new ArrayList<>() {
+		Map<Character, Integer> totalVowels = new HashMap<>() {
 		private static final long serialVersionUID = 1L;
 			{
-				add('a');
-				add('e');
-				add('i');
-				add('o');
-				add('u');
+				put('a', 0);
+				put('e', 0);
+				put('i', 0);
+				put('o', 0);
+				put('u', 0);
 			}
 		};
-		
+
 		for(int i = 0; i < sentences.size(); i++) {
-			Integer sentenceVowelCount = 0;
-			Integer sentenceConsonantsCount = 0;
+			Map<Character, Integer> sentenceVowels = new HashMap<>();
 			for (int j = 0; j < sentences.get(i).length(); j++) {
-				if(vowels.contains(sentences.get(i).toLowerCase().charAt(j))){
-					vowelTotalCount++;
-					sentenceVowelCount++;
-		        } else if (!signs.contains(sentences.get(i).toLowerCase().charAt(j))) {
-		        	consonantsTotalCount++;
-		        	sentenceConsonantsCount++;
+				if(totalVowels.containsKey(sentences.get(i).toLowerCase().charAt(j))){
+					if(sentenceVowels.containsKey(sentences.get(i).toLowerCase().charAt(j))) {
+						sentenceVowels.put(sentences.get(i).toLowerCase().charAt(j), sentenceVowels.get(sentences.get(i).toLowerCase().charAt(j)) + 1);
+					} else {
+						sentenceVowels.put(sentences.get(i).toLowerCase().charAt(j), 1);
+					}
+					totalVowels.put(sentences.get(i).toLowerCase().charAt(j), totalVowels.get(sentences.get(i).toLowerCase().charAt(j)) + 1);
 		        }
 			}
-			result += (i+1 + ". sentence vowel count: " + sentenceVowelCount + "\n");
-			result += (i+1 + ". sentence consonants count: " + sentenceConsonantsCount + "\n");
-			double percentage = 1;
-			if(sentenceVowelCount > sentenceConsonantsCount) {
-				percentage = (double)sentenceVowelCount/(double)sentenceConsonantsCount;
-				result += (i+1 + ". sentence vowel count is " + df.format(percentage*100 - 100) + "% greater than consonant's\n");
-			} else {
-				percentage = (double)sentenceConsonantsCount/(double)sentenceVowelCount;
-				result += (i+1 + ". sentence consonant count is " + df.format(percentage*100 - 100) + "% greater than vowel's\n");
+			result += (i+1 + ". rečenica: ");
+			int count = 0;
+			for (Map.Entry<Character, Integer> vowel : sentenceVowels.entrySet()) {
+			    count++;
+			    result += (vowel.getKey() + ": " + vowel.getValue() + (count == sentenceVowels.size() ? "\n" : ", ")); 
 			}
 		}
 
-		result += ("Total vowel count: " + vowelTotalCount + "\n");
-		result += ("Total consonants count: " + consonantsTotalCount + "\n");
-		result += (vowelTotalCount < consonantsTotalCount ? 
-			"Consonant count is " + df.format((double)consonantsTotalCount/(double)vowelTotalCount*100 - 100) + "% greater than vowel's" :
-			"Vowel count is " + df.format((double)vowelTotalCount/(double)consonantsTotalCount*100 - 100) + "% greater than consonant's");
+		int count = 0;
+		result += "Sveukuno: ";
+
+		for (Map.Entry<Character, Integer> vowel : totalVowels.entrySet()) {
+		    count++;
+		    result += (vowel.getKey() + ": " + vowel.getValue() + (count == totalVowels.size() ? "\n" : ", ")); 
+		}
+
 		System.out.println(result);
-		spacer();
 	}
 
 	private static List<String> getSentences(String text) {
