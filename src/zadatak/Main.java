@@ -9,7 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class Main {
-	private static List<Character> signs = new ArrayList<>() {
+	private static List<Character> signs = new ArrayList<Character>() {
 	private static final long serialVersionUID = 1L;
 		{
 			add(' ');
@@ -139,7 +139,7 @@ public class Main {
 	private static void statisticVowels(String text) {
 		String result = "";
 		List<String> sentences = getSentences(text);
-		Map<Character, Integer> totalVowels = new HashMap<>() {
+		Map<Character, Integer> totalVowels = new HashMap<Character, Integer>() {
 		private static final long serialVersionUID = 1L;
 			{
 				put('a', 0);
@@ -162,7 +162,7 @@ public class Main {
 					totalVowels.put(sentences.get(i).toLowerCase().charAt(j), totalVowels.get(sentences.get(i).toLowerCase().charAt(j)) + 1);
 		        }
 			}
-			result += (i+1 + ". rečenica: ");
+			result += (i+1 + ". rečenica:\n");
 			int count = 0;
 			for (Map.Entry<Character, Integer> vowel : sentenceVowels.entrySet()) {
 			    count++;
@@ -171,7 +171,7 @@ public class Main {
 		}
 
 		int count = 0;
-		result += "Sveukuno: ";
+		result += "Sveukuno:\n";
 
 		for (Map.Entry<Character, Integer> vowel : totalVowels.entrySet()) {
 		    count++;
